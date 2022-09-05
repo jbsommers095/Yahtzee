@@ -1,0 +1,171 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\title{Yahtzee Formulae}
+\author{Jem Somms}
+
+\maketitle
+
+\begin{abstract}
+How to determine scores and other values in Yahtzee. \newline
+For all listed values: \newline\newline
+number of dice =  $n \geq 2$ \newline
+number of sides per die = $d \geq 2$ \newline
+bonus points needed = $p$ \newline
+yahtzee score earned = $y$ \newline
+set of current dice = $S \subset \mathbb{N} - \{0\}$ \newline
+\end{abstract}
+
+\section{Scores}
+\subsection{Rolls per turn}
+\begin{equation}
+	rollsperturn = \lceil \text {max} (d, n) * 0.5 \rceil
+\end{equation}
+\subsection{Numbers}
+$a \in \{1, 2 \dots d\}$\newline
+$c$ = number of occurrances of $a$ in $S$ \newline
+\begin{equation}
+	numscore_a = c * a
+\end{equation}
+
+\subsection{Kinds}
+$K = \{a \dots \} \subseteq S$
+\begin{equation}
+smallkindscore=
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } \lvert K \rvert < \lceil n * 0.5 \rceil\\
+    \displaystyle\sum_{i \in S} i, & \text{if } \lvert K \rvert \geq \lceil n * 0.5 \rceil\\
+    \end{array}
+\right\}
+\end{equation}
+\begin{equation}
+largekindscore=
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } \lvert K \rvert < \lceil n * 0.75 \rceil\\
+    \displaystyle\sum_{i \in S} i, & \text{if } \lvert K \rvert \geq \lceil n * 0.75 \rceil\\
+    \end{array}
+\right\}
+\end{equation}
+\subsection{Full House}
+$K = \{a \dots\} \subset S$ $\lvert K \rvert = \lfloor n * 0.5 \rfloor$ \newline
+$L = \{b \dots\} \subset S$ $\lvert L \rvert = \lceil n * 0.5 \rceil$ \newline
+$K \cap L = \emptyset$
+\begin{equation}
+fullhousescore =
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } K \cup L \neq S\\
+    \lceil d * n * 0.83 \rceil, & \text{if } K \cup L = S\\
+    \end{array}
+\right\}
+\end{equation}
+
+\subsection{Straights}
+Duplicates in set of straights are removed and not considered for this formula \newline
+$K = \{a, a + 1\dots \} \subseteq S$
+
+\begin{equation}
+smallstraightscore =
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } \lvert K \rvert < \lceil n * 0.75 \rceil\\
+    d * n, & \text{if } \lvert K \rvert \geq \lceil n * 0.75 \rceil\\
+    \end{array}
+\right\}
+\end{equation}
+
+\begin{equation}
+largestraightscore =
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } \lvert K \rvert < n\\
+    \lceil d * n * 1.33 \rceil, &\text{if } \lvert K \rvert = n\\
+    \end{array}
+\right\}
+\end{equation}
+
+\subsection{Yahtzee}
+$K = \{a \dots a\} = S$
+\begin{equation}
+y=
+\left\{
+    \begin{array}{lr}
+    0, & \text{if } \lvert K \rvert < n\\
+    \lceil d * n * 1.66 \rceil, &\text{if } \lvert K \rvert = n\\
+    \end{array}
+\right\}
+\end{equation}
+
+\subsection{Chance}
+$K = \{a_0 \dots\ a_{n-1}\} = S$
+\begin{equation}
+	chancescore=\displaystyle\sum_{i \in S} i
+\end{equation}
+
+\section{Bonus Scores}
+\subsection{Number Score Bonus}
+\begin{equation}
+	\label{Points needed}
+	p = \lceil n * 0.5 \rceil * \displaystyle\sum_{i=1} ^{d} i
+\end{equation}
+
+\subsection{Bonus points to add}
+\begin{equation}
+	\label{Points needed}
+	numbonusscore = \left\{
+    \begin{array}{lr}
+        0, & \text{if } \displaystyle\sum_{i = 1} ^{d} numscore_i < p\\
+        \lceil d * n * 1.162 \rceil, & \text{if } \displaystyle\sum_{i = 1} ^{d} numscore_i \geq p\\
+    \end{array}
+\right\}
+\end{equation}
+
+\subsection{Yahtzee Bonus}
+\begin{equation}
+yahzteebonuscore = 
+\left\{
+    \begin{array}{lr}
+        0, & \text{if } y = 0\\
+        \lceil d * n * 3.32 \rceil, & \text{if } y > 0\\
+    \end{array}
+\right\}
+\end{equation}
+
+\section{Future Formulae}
+\subsection{Multiple Straights}
+Straights are impossible to achieve in the following situation: \newline
+Say we have $K = \{x, x + 1\dots\ x + d\} \subset S$ and $d  <  n $\newline
+Given the above property, a small straight is possible to get if $d \geq \lceil n * 0.75 \rceil$ \newline
+A large straight is impossible to achieve in this scenario \newline
+\newline
+A potential correction to this situation follows where \newline s = number of straights found and \newline $d < n$
+\begin{equation}
+straightscore = 
+\left\{
+    \begin{array}{lr}
+        s * d * (\lceil d * 0.75 \rceil), & \text{if } smallstraight\\
+        s * d * (\lceil d * 0.75 \rceil) * 1.33, & \text{if } largestraight\\
+    \end{array}
+\right\}
+\end{equation}
+
+If we wish to make straights more difficult to score, we can use the below formula
+
+\begin{equation}
+straightscore = 
+\left\{
+    \begin{array}{lr}
+    	0, & \text{if } s < \lceil n * 0.75 \rceil\\
+        s * d * n, & \text{if } s \geq \lceil n * 0.75 \rceil \text{ and } s < n\\
+        s * d * n * 1.33, & \text{if } s = n\\
+    \end{array}
+\right\}
+\end{equation}
+
+\end{document}
